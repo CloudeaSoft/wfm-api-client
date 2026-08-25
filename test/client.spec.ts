@@ -135,6 +135,37 @@ describe('createWfmApiClient', () => {
     expect(stats.statistics_closed['48hours']).toEqual([])
   })
 
+  it('unwraps v1 payload for drop sources by slug', async () => {
+    const calls: string[] = []
+    const relicSource = {
+      type: 'relic' as const,
+      item: '59a5cd4d5cd9938cfede7043',
+      relic: '6054ddba5221e30057500fb5',
+      rates: {
+        intact: 11,
+        exceptional: 13,
+        flawless: 17,
+        radiant: 20,
+      },
+      rarity: 'uncommon',
+      id: '62d2f23d7515670098198a4d',
+    }
+    const client = createWfmApiClient({
+      fetcher: jsonFetcher(({ url }) => {
+        calls.push(url)
+        return {
+          payload: {
+            dropsources: [relicSource],
+          },
+        }
+      }),
+    })
+
+    const sources = await client.items.getDropSources('ballistica_prime_upper_limb')
+    expect(calls[0]).toContain('/v1/items/ballistica_prime_upper_limb/dropsources')
+    expect(sources).toEqual([relicSource])
+  })
+
   it('refreshes session without authorization and updates access token', async () => {
     const auths: Array<string | undefined> = []
     const client = createWfmApiClient({
