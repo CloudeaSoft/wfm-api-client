@@ -112,6 +112,7 @@ export interface MissionDropSource extends DropSourceBase {
   rotation?: string
   event?: boolean
   modifier?: string
+  stage?: string[]
 }
 
 export interface NpcDropSource extends DropSourceBase {
