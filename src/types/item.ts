@@ -84,3 +84,41 @@ export interface ItemSet {
   id: string
   items: Item[]
 }
+
+export interface RelicDropRates {
+  intact: number
+  exceptional: number
+  flawless: number
+  radiant: number
+}
+
+interface DropSourceBase {
+  id: string
+  item: string
+  rarity: string
+}
+
+export interface RelicDropSource extends DropSourceBase {
+  type: 'relic'
+  relic: string
+  rates: RelicDropRates
+}
+
+export interface MissionDropSource extends DropSourceBase {
+  type: 'mission'
+  mission: string
+  rate: number
+  location?: string
+  rotation?: string
+  event?: boolean
+  modifier?: string
+  stage?: string[]
+}
+
+export interface NpcDropSource extends DropSourceBase {
+  type: 'npc'
+  npc: string
+  rate: number
+}
+
+export type DropSource = RelicDropSource | MissionDropSource | NpcDropSource

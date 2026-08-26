@@ -11,5 +11,6 @@ export function createItemEndpoints(
     get: v2.get,
     getSet: v2.getSet,
     getStatistics: v1.getStatistics,
+    getDropSources: v1.getDropSources,
   }
 }
