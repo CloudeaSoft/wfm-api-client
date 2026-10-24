@@ -19,10 +19,14 @@ import { createWfmApiClient } from 'wfm-api-client'
 
 const client = createWfmApiClient({
   language: 'zh-hans',
+  userAgent: 'MyApp/1.0 (+https://example.com)',
 })
 
 const items = await client.items.list()
 ```
+
+Requests use `User-Agent: wfm-api-client (+https://github.com/CloudeaSoft/wfm-api-client)` by default.
+Set `userAgent` to identify your application with its name and a repository or contact URL.
 
 ## Request plugins
 

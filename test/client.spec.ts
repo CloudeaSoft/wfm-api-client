@@ -24,6 +24,7 @@ describe('createWfmApiClient', () => {
       fetcher: jsonFetcher(({ url, headers }) => {
         calls.push(url)
         expect(headers?.Language).toBe('zh-hans')
+        expect(headers?.['User-Agent']).toBe('wfm-api-client (+https://github.com/CloudeaSoft/wfm-api-client)')
         return { apiVersion: '0.25.0', data: [{ id: '1', slug: 'forma' }], error: null }
       }),
     })
@@ -31,6 +32,34 @@ describe('createWfmApiClient', () => {
     const items = await client.items.list()
     expect(calls[0]).toContain('/v2/items')
     expect(items).toEqual([{ id: '1', slug: 'forma' }])
+  })
+
+  it('sends a configured user agent on v1 and v2 requests through the default fetcher', async () => {
+    const originalFetch = globalThis.fetch
+    const calls: Headers[] = []
+    globalThis.fetch = async (input, init) => {
+      calls.push(new Headers(init?.headers))
+      return Response.json(String(input).includes('/v1/')
+        ? { payload: { statistics_closed: { '90days': [] } } }
+        : { data: [] })
+    }
+    try {
+      const client = createWfmApiClient({
+        userAgent: 'ExampleApp/1.0 (+https://example.com)',
+        language: 'zh-hans',
+      })
+      expect(await client.items.list()).toEqual([])
+      expect(await client.items.getStatistics('forma')).toEqual({ statistics_closed: { '90days': [] } })
+      expect(calls).toHaveLength(2)
+      for (const headers of calls) {
+        expect(headers.get('User-Agent')).toBe('ExampleApp/1.0 (+https://example.com)')
+        expect(headers.get('Accept')).toBe('application/json')
+        expect(headers.get('Language')).toBe('zh-hans')
+      }
+    }
+    finally {
+      globalThis.fetch = originalFetch
+    }
   })
 
   it('throws WfmApiError on envelope error', async () => {

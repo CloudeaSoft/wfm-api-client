@@ -15,6 +15,7 @@ import type {
 import { WfmApiError } from './errors'
 
 const DEFAULT_TIMEOUT_MS = 10_000
+const DEFAULT_USER_AGENT = 'wfm-api-client (+https://github.com/CloudeaSoft/wfm-api-client)'
 
 function appendQuery(
   url: string,
@@ -56,9 +57,11 @@ export function mergeContext(
 function buildHeaders(
   context: RequestContext,
   init: WfmRequestInit,
+  userAgent: string,
 ): Record<string, string> {
   const headers: Record<string, string> = {
-    Accept: 'application/json',
+    'Accept': 'application/json',
+    'User-Agent': userAgent,
   }
 
   if (context.language)
@@ -183,11 +186,12 @@ export function createDefaultFetcher(timeoutMs = DEFAULT_TIMEOUT_MS): WfmFetcher
 }
 
 export function createRequest(options: {
+  userAgent?: string
   fetcher: WfmFetcher
   getDefaults: () => RequestContext
   plugins?: WfmPlugin[]
 }): WfmRequest {
-  const { fetcher, getDefaults, plugins = [] } = options
+  const { fetcher, getDefaults, plugins = [], userAgent = DEFAULT_USER_AGENT } = options
 
   const baseRequest: WfmRequestNext = async (ctx) => {
     const { url: finalUrl, init, context } = ctx
@@ -199,7 +203,7 @@ export function createRequest(options: {
       })
     }
 
-    const headers = buildHeaders(context, init)
+    const headers = buildHeaders(context, init, userAgent)
     const prepared = buildBody(init)
     Object.assign(headers, prepared.headers)
 
