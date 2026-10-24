@@ -51,6 +51,8 @@ export interface WfmPlugin {
 }
 
 export interface WfmApiClientOptions extends RequestContext {
+  /** Application identification. Defaults to the wfm-api-client name and repository URL. */
+  userAgent?: string
   fetcher?: WfmFetcher
   timeoutMs?: number
   /** Onion-style request plugins; array order is outer → inner. */

@@ -38,6 +38,7 @@ export function createWfmApiClient(options: WfmApiClientOptions = {}): {
   const fetcher = options.fetcher ?? createDefaultFetcher(options.timeoutMs)
   const request = createRequest({
     fetcher,
+    userAgent: options.userAgent,
     getDefaults: () => state,
     plugins: options.plugins,
   })
