@@ -1,7 +1,7 @@
 {
   "name": "wfm-api-client",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "packageManager": "pnpm@11.15.1",
   "description": "TypeScript API wrapper for Warframe Market (community, unofficial)",
   "license": "MIT",
